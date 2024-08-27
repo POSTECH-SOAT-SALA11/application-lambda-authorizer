@@ -31,6 +31,9 @@ jobs:
     needs: setup
 
     steps:
+      - name: List files for debugging
+        run: ls -la
+
       - name: Install dependencies
         run: |
           if [ -f lambda/requirements.txt ]; then pip install -r lambda/requirements.txt; fi
