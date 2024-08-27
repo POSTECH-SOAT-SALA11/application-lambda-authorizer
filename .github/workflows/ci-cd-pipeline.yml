@@ -37,10 +37,8 @@ jobs:
 
       - name: Zip Lambda function
         run: |
-          cd
+          cd ..
           ls -ltr
-          cd lambda
-          zip -r9 ../lambda_function.zip
 
       - name: Upload Lambda to Artifacts
         uses: actions/upload-artifact@v3
