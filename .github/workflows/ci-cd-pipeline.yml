@@ -38,13 +38,13 @@ jobs:
       - name: Zip Lambda function
         run: |
           cd lambda
-          zip -r9 ../lambda_function.zip
+          zip -r9 ../lambda_authorizer.zip
 
       - name: Upload Lambda to Artifacts
         uses: actions/upload-artifact@v3
         with:
           name: lambda_function
-          path: lambda_function.zip
+          path: lambda_authorizer.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -64,7 +64,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "sa-east-1"
         run: |
-          aws s3 cp lambda_function.zip s3://fonte-codigo-lambda-authorizer/lambda_function.zip
+          aws s3 cp lambda_authorizer.zip s3://fonte-codigo-lambda-authorizer/lambda_authorizer.zip
 
   post_actions:
     runs-on: ubuntu-latest
@@ -75,4 +75,4 @@ jobs:
     steps:
       - name: Clean up local files
         run: |
-          rm -f lambda_function.zip
+          rm -f lambda_authorizer.zip
