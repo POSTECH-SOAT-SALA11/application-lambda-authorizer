@@ -8,36 +8,50 @@ def lambda_handler(event, context):
     if not cpf:
         return {
             'statusCode': 400,
-            'body': json.dumps('CPF não fornecido no header.')
+            'body': 'CPF não fornecido no header.'
         }
 
     # Conectar ao Cognito
     client = boto3.client('cognito-idp')
 
-    user_pool_id = 'sa-east-1_ycgIX6Are'  # Substitua pelo ID do seu User Pool
-    cpf_field = 'custom:cpf'  # O campo customizado onde o CPF foi salvo no Cognito
+    user_pool_id = 'sa-east-1_Vk8Ngd5Iy'  # Substitua pelo ID do seu User Pool
+    cpf_field = 'preferred_username'  # O campo customizado onde o CPF foi salvo no Cognito
 
     try:
+        # Certifique-se de que o CPF está no formato correto
+        cpf = cpf.strip()  # Remove espaços em branco
+        if len(cpf) != 11 or not cpf.isdigit():
+            return {
+                'statusCode': 400,
+                'body': 'CPF inválido. O CPF deve conter 11 dígitos numéricos.'
+            }
+
         # Buscar usuário pelo CPF
+        filter_expression = f'{cpf_field}="{cpf}"'
         response = client.list_users(
             UserPoolId=user_pool_id,
-            Filter=f'{cpf_field} = "{cpf}"'
+            Filter=filter_expression
         )
         
         # Verificar se o CPF está associado a algum usuário
         if response['Users']:
             return {
                 'statusCode': 200,
-                'body': json.dumps('CPF válido. Usuário encontrado.')
+                'body': 'CPF válido. Usuário encontrado.'
             }
         else:
             return {
                 'statusCode': 404,
-                'body': json.dumps('CPF inválido. Usuário não encontrado.')
+                'body': 'CPF inválido. Usuário não encontrado.'
             }
 
+    except client.exceptions.InvalidParameterException as e:
+        return {
+            'statusCode': 400,
+            'body': f'Erro nos parâmetros fornecidos: {str(e)}'
+        }
     except Exception as e:
         return {
             'statusCode': 500,
-            'body': json.dumps(f'Erro ao verificar o CPF: {str(e)}')
+            'body': f'Erro ao verificar o CPF: {str(e)}'
         }
