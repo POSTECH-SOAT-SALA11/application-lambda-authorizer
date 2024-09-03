@@ -71,8 +71,7 @@ jobs:
       - name: Download Lambda Artifact
         uses: actions/download-artifact@v3
         with:
-          name: lambda_function
-          path: .
+          name: lambda-zip
   
       - name: Upload Lambda to S3
         env:
