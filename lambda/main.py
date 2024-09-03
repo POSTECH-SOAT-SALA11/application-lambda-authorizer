@@ -7,7 +7,7 @@ cognito_client = boto3.client('cognito-idp')
 USER_POOL_ID = 'sa-east-1_GSR1Kl3jx'
 APP_CLIENT_ID = '28qfrp9p1t9n5d27dr1o3i1e5e'
 
-#lambda
+#lambda-teste-novo
 def lambda_handler(event, context):
     cpf = event['queryStringParameters'].get('cpf')
 
