@@ -21,7 +21,7 @@ jobs:
         with:
           name: source-code
           path: .
-  
+
   setup:
     runs-on: ubuntu-latest
     needs: checkout
@@ -66,13 +66,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment: production
-  
+
     steps:
       - name: Download Lambda Artifact
         uses: actions/download-artifact@v3
         with:
           name: lambda-zip
-  
+
       - name: Upload Lambda to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -80,19 +80,14 @@ jobs:
           AWS_REGION: "sa-east-1"
         run: |
           aws s3 cp lambda_function.zip s3://fonte-codigo-lambda-authorizer/lambda_function.zip
-  
-      - name: Trigger Terraform Pipeline
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: 'infra-lambda-authorizer',
-              workflow_id: 'ci-cd-pipeline.yml',
-              ref: 'main'
-            })
+
+      - name: Update Lambda Function Code
         env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "sa-east-1"
+        run: |
+          aws lambda update-function-code --function-name lambda_authorizer --s3-bucket fonte-codigo-lambda-authorizer --s3-key lambda_function.zip
 
   post_actions:
     runs-on: ubuntu-latest
