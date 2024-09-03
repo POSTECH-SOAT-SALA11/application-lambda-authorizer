@@ -82,17 +82,12 @@ jobs:
           aws s3 cp lambda_function.zip s3://fonte-codigo-lambda-authorizer/lambda_function.zip
   
       - name: Trigger Terraform Pipeline
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: 'infra-lambda-authorizer',
-              workflow_id: 'ci-cd-pipeline.yml',
-              ref: 'main'
-            })
-        env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+          https://api.github.com/repos/POSTECH-SOAT-SALA11/infra-lambda-authorizer/actions/workflows/ci-cd-pipeline.yml/dispatches \
+          -d '{"ref":"main"}'
 
   post_actions:
     runs-on: ubuntu-latest
