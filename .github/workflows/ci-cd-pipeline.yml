@@ -87,7 +87,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "sa-east-1"
         run: |
-          aws lambda update-function-code --function-name lambda_authorizer --s3-bucket fonte-codigo-lambda-authorizer --s3-key lambda_clientes.zip
+          aws lambda update-function-code --function-name lambda_authorizer_clientes --s3-bucket fonte-codigo-lambda-authorizer --s3-key lambda_clientes.zip
 
   post_actions:
     runs-on: ubuntu-latest
